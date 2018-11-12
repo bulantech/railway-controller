@@ -3,6 +3,7 @@ print("Controller System Start..")
 from gpiozero import LED, Button
 
 led = LED(17) # comment
+button = Button(3, pull_up=True) # for test
 
 # set input pin	
 sensor1 = Button(14, pull_up=True)
@@ -24,6 +25,9 @@ sensor14 = Button(19, pull_up=True)
 sensor15 = Button(13, pull_up=True)
 	
 # input event	
+button.when_pressed = lambda : sensorOn(69) # for test
+button.when_released = lambda : sensorOff(69) # for test
+
 sensor1.when_pressed = lambda : sensorOn(1)
 sensor1.when_released = lambda : sensorOff(1)
 sensor2.when_pressed = lambda : sensorOn(2)
@@ -57,19 +61,19 @@ sensor14.when_released = lambda : sensorOff(14)
 sensor15.when_pressed = lambda : sensorOn(15)
 sensor15.when_released = lambda : sensorOff(15)
 
-dataChange = { "even": "none", "channel": 0}
-dataChangeBuf = dataChange
+dataChange = { "event": "none", "channel": 0}
+dataChangeBuf = { "event": "none", "channel": 0}
 
 def sensorOn(channel):
 	led.on()
 	print('sensorOn ' + str(channel))
-	dataChange["even"] = "sensorOn"
+	dataChange["event"] = "sensorOn"
 	dataChange["channel"] = channel
 	
 def sensorOff(channel):
 	led.off()
 	print('sensorOff ' + str(channel))
-	dataChange["even"] = "sensorOff"
+	dataChange["event"] = "sensorOff"
 	dataChange["channel"] = channel
 
 # web server and socketio	
@@ -101,21 +105,13 @@ app = Flask(__name__, static_url_path='')
 thread = None
 
 def background_thread():
-	"""Example of how to send server generated events to clients.
-	count = 0
 	while True:
-		sio.sleep(1)
-		count += 1
-		sio.emit('my response', {'data': count}, namespace='/chat')
-		print('background_thread ' )
-		"""
-	while True:
-		sio.sleep(1)
-		print('background_thread ', dataChange )
+		sio.sleep(0.1)
 		if dataChange != dataChangeBuf :
-			print('background_thread ' )
+			# print('dataChange != dataChangeBuf ' )
 			sio.emit('sensor', dataChange, namespace='/chat')
-		
+			dataChangeBuf["event"] = dataChange["event"]
+			dataChangeBuf["channel"] = dataChange["channel"]	
                  
 # route
 @app.route('/')

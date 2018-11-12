@@ -23,8 +23,8 @@
             });
            
 						socket.on('sensor', function(msg) {
-							console.log('sensorOn '+ msg.data)
-              $('#log').append('<br>Received: ' + msg.data);
+							console.log('sensorOn '+ msg)
+              $('#log').append('<br>Received:>> ' + msg.event + ',' + msg.channel);
             });
             
             // event handler for server sent data
