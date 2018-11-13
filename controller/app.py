@@ -1,8 +1,11 @@
+
+# -*- coding: utf-8 -*-
+
 print("Controller System Start..")
 
 from gpiozero import LED, Button
 
-led = LED(17) # comment
+led = LED(17) # for test
 button = Button(3, pull_up=True) # for test
 
 # set input pin	
@@ -24,7 +27,7 @@ sensor13 = Button(26, pull_up=True)
 sensor14 = Button(19, pull_up=True)
 sensor15 = Button(13, pull_up=True)
 	
-# input event	
+# input event on เมื่อสัญาณเข้าเป็น 0
 button.when_pressed = lambda : sensorOn(69) # for test
 button.when_released = lambda : sensorOff(69) # for test
 
@@ -61,9 +64,11 @@ sensor14.when_released = lambda : sensorOff(14)
 sensor15.when_pressed = lambda : sensorOn(15)
 sensor15.when_released = lambda : sensorOff(15)
 
+# ตัวแปรเก็บค่าการเปลี่ยแปลงของ sensor
 dataChange = { "event": "none", "channel": 0}
 dataChangeBuf = { "event": "none", "channel": 0}
 
+# ฟังชั่งเมื่เซนต์เซอร์เปลี่นสถานะ
 def sensorOn(channel):
 	led.on()
 	print('sensorOn ' + str(channel))
@@ -80,11 +85,14 @@ def sensorOff(channel):
 import socketio
 import eventlet
 import eventlet.wsgi
+
+# นำเข้า flask library เป็น framework สำหรับจัดการ webserver
 from flask import Flask, render_template, send_from_directory
 
 socketConnect = False
 
 # get local ip address
+# นำเข้า socket library เพื่ออ่าน ip
 import socket
 def get_ip():
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -100,10 +108,12 @@ def get_ip():
 
 print("IP: "+get_ip())
 
+#สร่าง socketio server
 sio = socketio.Server()
 app = Flask(__name__, static_url_path='')
 thread = None
 
+# ฟังชั่ส่งข้อมูลการเปลี่ยนแปลงของ sensor ไปหน้าเว็บ
 def background_thread():
 	while True:
 		sio.sleep(0.1)
@@ -126,7 +136,7 @@ def send_js(path):
 	print("-----path ", path)
 	return send_from_directory('js', path)
 
-# socketio          
+# socketio @sio.on คือรับค่ามาจากหน้าเว็บ        
 @sio.on('connect', namespace='/chat')
 def connect(sid, environ):
 	socketConnect = True
@@ -141,11 +151,6 @@ def message(sid, data):
 def disconnect(sid):
 	socketConnect = False
 	print('disconnect ', sid)
-
-def socketEmit(message, data):
-	print('socketEmit ', message, data)
-	#sio.emit(message, data, namespace='/chat')
-	sio.emit('my response', {'data': 'yuiyuiyui'}, namespace='/chat')
 
 # start flask web server
 if __name__ == '__main__':
