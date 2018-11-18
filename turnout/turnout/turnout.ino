@@ -13,6 +13,8 @@
 #define SERVO_3 D7
 #define SERVO_4 D8
 
+int status[] = {0, 0, 0, 0};
+
 ESP8266WebServer server(80); // เปิด webserver ที่ port 80
 
 Servo servo1;  // create servo object to control a servo
@@ -22,42 +24,116 @@ Servo servo4;
 
 // home page
 String homePage = " \
-<!DOCTYPE html>\ 
-  <head>\ 
-    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>   \ 
- </head>\ 
- <body>\ 
-   <button id='btLed'>LED ON</button> \ 
-   <br>\ 
-   <br>\ 
-   <div>\ 
-     <input type='text' id='lname'>\ 
-     <br>\ 
-     <button id='btSave'>SAVE</button>  \ 
-   </div>   \ 
-   <script>     \ 
-     $( document ).ready(function() {       \ 
-       $( '#btLed' ).click(function() {         \ 
-         if($( '#btLed' ).text() == 'LED ON') { \ 
-           $.post( '/on', function( data ) {\ 
-             $( '#btLed' ).text(data);\ 
-           });                   \ 
-         } else {           \ 
-           $.post( '/off', function( data ) {\ 
-             $( '#btLed' ).text(data);\ 
-           });      \ 
-         }       \ 
-       });  \ 
-       $( '#btSave' ).click(function() {  \ 
-         let inputData = $( '#lname' ).val();  \ 
-         $.post( '/config/set', {msg: inputData} , function( data ) {\ 
-           console.log('data => ' + data);\ 
-         });                   \ 
-       }); \ 
-     });   \ 
-   </script>    \ 
- </body>\ 
- <html>\ 
+<!DOCTYPE html>  \
+<head>  \
+  <title>Railroad Switch</title> \
+  <meta charset='utf-8'> \
+  <meta name='viewport' content='width=device-width, initial-scale=1'> \
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'> \
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script> \
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script> \
+  <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>  \
+</head>  \
+<body>  \
+  <div class='jumbotron text-center'> \
+    <h2>Railroad Switch</h2>     \
+    <div class='row justify-content-center''> \
+      <div class='col-3'> \
+        <div class='form-check'> \
+          <input class='form-check-input' type='checkbox' value='' id='defaultCheck1'> \
+          <label class='form-check-label' for='defaultCheck1'> \
+            External IP: \
+          </label> \
+        </div> \
+        <input class='form-control' type='text' placeholder='Enter Railroad Switch ip' id='ip' disabled> \
+      </div> \
+    </div> \
+  </div> \
+ \
+  <div class='container'> \
+    <div class='card-deck'> \
+      <div class='card text-center' name='1'> \
+        <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
+        <div class='card-body'> \
+          <h5 class='card-title'>Turnout 1</h5> \
+          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
+          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+        </div> \
+      </div> \
+      <div class='card text-center' name='2'> \
+        <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
+        <div class='card-body'> \
+          <h5 class='card-title'>Turnout 2</h5> \
+          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
+          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+        </div> \
+      </div> \
+      <div class='card text-center' name='3'> \
+        <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
+        <div class='card-body'> \
+          <h5 class='card-title'>Turnout 3</h5> \
+          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
+          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+        </div> \
+      </div> \
+      <div class='card text-center' name='4'> \
+        <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
+        <div class='card-body'> \
+          <h5 class='card-title'>Turnout 4</h5> \
+          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
+          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+        </div> \
+      </div> \
+    </div> \
+  </div> \
+  \
+  <script>       \
+    $( document ).ready(function() {    \
+      let ori = window.location.origin; \
+      $.get( ori+'/status', function( data ) { \
+        console.log( data ); \
+      }); \
+\
+      $('button').click(function(e) {   \
+        let name = $(this).attr('name'); \
+        let cardNumber = $(this).parent().parent().attr('name'); \
+        let ip = $('#ip').val(); \
+        let checked = $('#defaultCheck1').is(':checked'); \
+        let url = 'http://'+ip+'/'+cardNumber+'/'+name; \
+        let origin = window.location.origin; \
+ \
+        if(!checked) { \
+          url = origin+'/'+cardNumber+'/'+name; \
+        } \
+        if(ip == '' && checked) {  \
+          alert('Enter Railroad Switch ip'); \
+          return; \
+        } \
+ \
+        $(this).parent().find('button').removeClass().addClass('btn btn-primary btn-lg'); \
+        $(this).removeClass().addClass('btn btn-danger btn-lg'); \
+        $(this).parent().parent().find('img').attr('src','https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg'); \
+        if(name=='r') { \
+          $(this).parent().parent().find('img').attr('src','https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/r.jpg'); \
+        } \
+         \
+        console.log(name, cardNumber, ip, url, origin)   ;      \
+        $.get( url, function( data ) { \
+          console.log( data ); \
+        }); \
+      });  \
+ \
+      $('#defaultCheck1').click(function() { \
+        if ($(this).is(':checked')) { \
+          $('#ip').prop('disabled', false); \
+        } else { \
+          $('#ip').prop('disabled', true); \
+        } \
+      }); \
+   });     \
+  </script>      \
+</body>  \
+<html> \
  ";
 
 void handleRoot() {
@@ -147,66 +223,90 @@ void setup() {
   // web router  
   server.on("/", handleRoot);
 
+  server.on("/status", [](){ 
+    String txt = "{\"1\":" + String(status[0]) + ", \"2\":" + String(status[1]) + ", \"3\":" + String(status[2]) + ", \"4\":" + String(status[3]) + "}";
+    Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.send ( 200, "text/plain", txt ); 
+    digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
+  }); 
+  
   // controll servor 1
   server.on("/1/l", [](){ 
+    status[0] = 0;
     servo1.write(0);
     String txt = "{servo:1, turn: left}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*"); //ให้สามารถเรียกจาก jquery ได้
     server.send ( 200, "text/plain", txt ); 
-    digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
+    digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH); // led กระพริบแสดงสถานะการเรียก url นี้
   });
   server.on("/1/r", [](){ 
+    status[0] = 90;
     servo1.write(90);
-    String txt = "{servo:1, turn: left}";
+    String txt = "{servo:1, turn: right}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send ( 200, "text/plain", txt ); 
     digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
   });
 
   // controll servor 2
   server.on("/2/l", [](){ 
+    status[1] = 0;
     servo2.write(0);
     String txt = "{servo:2, turn: left}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send ( 200, "text/plain", txt ); 
     digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
   });
   server.on("/2/r", [](){ 
+    status[1] = 90;
     servo2.write(90);
     String txt = "{servo:2, turn: right}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send ( 200, "text/plain", txt ); 
     digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
   });
 
   // controll servor 3
   server.on("/3/l", [](){ 
+    status[2] = 0;
     servo3.write(0);
     String txt = "{servo:3, turn: left}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send ( 200, "text/plain", txt ); 
     digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
   });
   server.on("/3/r", [](){ 
+    status[2] = 90;
     servo3.write(90);
     String txt = "{servo:3, turn: right}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send ( 200, "text/plain", txt ); 
     digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
   });
    
   // controll servor 4
   server.on("/4/l", [](){ 
+    status[3] = 0;
     servo4.write(0);
     String txt = "{servo:4, turn: left}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send ( 200, "text/plain", txt ); 
     digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
   });
   server.on("/4/r", [](){ 
+    status[3] = 90;
     servo4.write(90);
     String txt = "{servo:4, turn: right}";
     Serial.println(txt);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send ( 200, "text/plain", txt ); 
     digitalWrite(LED, LOW); delay(10); digitalWrite(LED, HIGH);
   }); 
