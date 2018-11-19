@@ -1,41 +1,16 @@
-1. Install flask web framework, ลง library ที่เกี่ยวข้อง
-pip install Flask
-pip install flask-cors
+1. Install Arduino IDE and Aruduino Core
+https://www.youtube.com/watch?v=dMujuIKpWdM&list=PLsFSjZNuOAzYoHDvCKn078jqSdhJesNE2&index=2
 
-2. Copy railway-controller/ จาก pc ไปยัง pi /home/pi ด้วยโปรแกรม winSCP
+2. Install WifiManager
+https://youtu.be/6DtdFsTm0BY?list=PLsFSjZNuOAzYoHDvCKn078jqSdhJesNE2&t=456
 
-3. Run, เปิด terminal
-python /home/pi/railway-controller/train/app.py
-# SEE IP ON CONSOLE, จะแสดง ip ที่จอ
+3. Open turnout.ino and upload to NodeMCU
 
-4. Test output from pin input, press GPIO2 to ground, output GPIO17 is HIGH
-จอวงจรทดสอบ สวิทช์ ต่อ GPIO2 กดต่อลงกราวด์, led ต่อ GPIO17
+4. Run and set wifi
+- เปิด Serial monitor
+- กด reset, จะเห็น led กระพริบ
+https://youtu.be/6DtdFsTm0BY?list=PLsFSjZNuOAzYoHDvCKn078jqSdhJesNE2&t=718
 
 5. Test from web browser, ทดสอบยนเว็บบราวเซอร์
-
-status
-request:
-	http://TRAIN_IP:8001/status
+http://TURNOUT_IP
 	
-response: start or stop
-	{
-		"status": "stop"
-	}
-	
-start
-request:
-	http://TRAIN_IP:8001/start
-	
-response: output high
-	{
-		"start": "OK"
-	}
-	
-stop
-request:
-	http://TRAIN_IP:8001/stop
-	
-response: output low
-	{
-		"stop": "OK"
-	}
