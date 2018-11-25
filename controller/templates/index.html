@@ -64,7 +64,7 @@
                 Train 2
               </div>
               <div class="card-body">
-                <button class="btn btn-primary btn-lg train" type="button">START</button>
+                <button class="btn btn-primary btn-lg train" type="button" name="train2start">START</button>
                 <button class="btn btn-danger btn-lg train" type="button">STOP</button>
               </div>
             </div>
@@ -151,7 +151,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
           <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
         </div>
       </div>
@@ -159,6 +159,9 @@
   </div>
 
   <script type="text/javascript" charset="utf-8">
+    
+    var timeoutStartTrain2 = 20 //start train 2 after, second
+
     $(document).ready(function(){
       console.log('start..')
       namespace = '/chat';
@@ -217,6 +220,11 @@
           $.get( url1, function( data ) {
             console.log( data );
           });
+          if(name.toLowerCase() == 'start') {
+            setTimeout(() => {
+              $('button[name="train2start"]').click()
+            }, timeoutStartTrain2*1000)
+          }
         } else if(cardNumber=='2') {
           console.log(name, cardNumber, url2)
           $.get( url2, function( data ) {
