@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Flask-SocketIO Test</title>
+    <script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/js/socket.io.slim.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function(){
+						console.log('start..')
+            namespace = '/chat';
+            var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+
+            socket.on('connect', function() {
+                socket.emit('chat message', {data: 'I\'m connected!'});
+                console.log('connect')
+            });
+            socket.on('disconnect', function() {
+                $('#log').append('<br>Disconnected');
+            });
+            socket.on('my response', function(msg) {
+							console.log('my response '+ msg)
+              $('#log').append('<br>Received: ' + msg.data);
+            });
+           
+						socket.on('sensor', function(msg) {
+							console.log('sensorOn '+ msg)
+              $('#log').append('<br>Received:>> ' + msg.event + ',' + msg.channel);
+            });
+            
+            // event handler for server sent data
+            // the data is displayed in the "Received" section of the page
+            // handlers for the different forms in the page
+            // these send data to the server in a variety of ways
+            $('#emit').click(function(event) {
+							var jqxhr = $.ajax( "http://192.168.1.38:8001/start" )
+								.done(function() {
+									console.log( "success" );
+								})
+								.fail(function(err) {
+									console.log( "error " + err );
+								})
+								.always(function() {
+									console.log( "complete" );
+								});
+  
+                socket.emit('chat message', {data: $('#emit_data').val()});
+                console.log('-----'+$('#emit_data').val())
+                return false;
+            });
+    
+        });
+    </script>
+</head>
+<body>
+    <h1>Flask-SocketIO Test</h1>
+    <h2>Send:</h2>
+    <form method="POST" action='#'>
+        <input type="text" name="emit_data" id="emit_data" placeholder="Message">
+        <input type="button" value="Echo" id="emit">
+    </form>
+   
+    <h2>Receive:</h2>
+    <div><p id="log"></p></div>
+</body>
+</html>
