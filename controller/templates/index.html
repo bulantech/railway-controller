@@ -161,44 +161,57 @@
   <script type="text/javascript" charset="utf-8">
     
     var timeoutStartTrain2 = 20 //start train 2 after, second
+    
+    var lowCount = 0.05 // ค่าสูงสุดของเหล็กแคบ
+    var highCount = 0.50 // ค่าต่ำสุดของเหล็กกว้าง
+    
+    var sensorStation1 = 1 //station sensor
+    var sensorStation2 = 5
+    var sensorStation3 = 8
+    var sensorStation4 = 11
+
+    var sensor1XY = [10, 20] // xy point on image
+    var sensor2XY = [10, 20]
+    var sensor3XY = [10, 20]
+    var sensor4XY = [10, 20]
+    var sensor5XY = [10, 20]
+
+    var sensor6XY = [10, 20]
+    var sensor7XY = [10, 20]
+    var sensor8XY = [10, 20]
+    var sensor9XY = [10, 20]
+    var sensor10XY = [10, 20]
+
+    var sensor11XY = [10, 20]
+    var sensor12XY = [10, 20]
+    var sensor13XY = [10, 20]
+    var sensor14XY = [10, 20]
+    var sensor15XY = [10, 20]
 
     $(document).ready(function(){
-      console.log('start..')
+      console.log('jquery start..')
+
+      // socket io, get sonsor data
       namespace = '/chat';
       var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
 
       socket.on('connect', function() {
         socket.emit('chat message', {data: 'I\'m connected!'});
-        console.log('connect')
+        console.log('socket io connect')
       });
       socket.on('disconnect', function() {
         $('#log').append('<br>Disconnected');
       });
-      socket.on('my response', function(msg) {
-        console.log('my response '+ msg)
-        $('#log').append('<br>Received: ' ,msg.data);
-      });
       
       socket.on('sensor', function(msg) {
-        console.log(msg)
-        $('#log').append('<br>Received:>> ' + msg.event + ',' + msg.channel);
-      });
-
-      $('#emit').click(function(event) {
-        var jqxhr = $.ajax( "http://192.168.1.38:8001/start" )
-          .done(function() {
-            console.log( "success" );
-          })
-          .fail(function(err) {
-            console.log( "error " + err );
-          })
-          .always(function() {
-            console.log( "complete" );
-          });
-
-          socket.emit('chat message', {data: $('#emit_data').val()});
-          console.log('-----'+$('#emit_data').val())
-          return false;
+        // console.log(msg)
+        if(msg.event == 'sensorOff') {
+          if(msg.count < highCount) {
+            console.log('train1', msg.channel) //or train 2
+          } else if(msg.count > lowCount) {
+            console.log('train2', msg.channel) //or train 1
+          }
+        }
       });
       
       // Train start stop 
