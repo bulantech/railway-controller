@@ -23,6 +23,11 @@
 
   <div class="container-fluid">
 
+    <span id="log" style="position: absolute; z-index: 1; "></span>
+    <span id="train1" style="position: absolute; z-index: 1; ">
+      <img src="images/1.png" alt="Card image cap" style="height: 50px; width: 50px;">
+    </span>
+
     <!-- map -->
     <div class="row mt-3 py-2">
       <div class="col-12">
@@ -173,25 +178,29 @@
     var lowCount = 0.05 // ค่าสูงสุดของเหล็กแคบ
     var highCount = 0.50 // ค่าต่ำสุดของเหล็กกว้าง
     
-    var station = [1, 5, 8, 11]  //station sensor
+    var station = [1, 5, 8, 11]  //station sensor     
+    var sensorXY = [ // xy point on image
+      [0, 0], // not use
 
-    var sensor1XY = [10, 20] // xy point on image
-    var sensor2XY = [10, 20]
-    var sensor3XY = [10, 20]
-    var sensor4XY = [10, 20]
-    var sensor5XY = [10, 20]
+      [770, 334], // sensor 1 position
+      [757, 226],
+      [956, 329],
+      [718, 442],
+      [571, 327],
 
-    var sensor6XY = [10, 20]
-    var sensor7XY = [10, 20]
-    var sensor8XY = [10, 20]
-    var sensor9XY = [10, 20]
-    var sensor10XY = [10, 20]
+      [770, 334], // sensor 1 position
+      [757, 226],
+      [956, 329],
+      [718, 442],
+      [571, 327],
 
-    var sensor11XY = [10, 20]
-    var sensor12XY = [10, 20]
-    var sensor13XY = [10, 20]
-    var sensor14XY = [10, 20]
-    var sensor15XY = [10, 20]
+      [770, 334], // sensor 1 position
+      [757, 226],
+      [956, 329],
+      [718, 442],
+      [571, 327],
+    ]
+
 
     $(document).ready(function(){
       console.log('jquery start..')
@@ -209,23 +218,25 @@
       });
       
       socket.on('sensor', function(msg) {
-        // console.log(msg)
+        console.log('sensorXY =>',sensorXY[msg.channel])
         let train = 0
         if(msg.event == 'sensorOff') {          
           if(msg.count < highCount) {
             train = 1
             console.log('train1', msg.channel) //or train 2
+
           } else if(msg.count > lowCount) {
             train = 2
             console.log('train2', msg.channel) //or train 1
           }
-          if(station.indexOf(msg.channel) >= 0) {
+          $('#train1').animate({ 'top': (sensorXY[msg.channel][1]-25)+'px','left': (sensorXY[msg.channel][0]-25)+'px'})
 
-            $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'stop"]').click()
-            setTimeout(() => {
-              $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'start"]').click()
-            }, timeoutStartAfterStop*1000)
-          }
+          // if(station.indexOf(msg.channel) >= 0) {
+          //   $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'stop"]').click()
+          //   setTimeout(() => {
+          //     $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'start"]').click()
+          //   }, timeoutStartAfterStop*1000)
+          // }
         }
       });
       
@@ -296,7 +307,8 @@
       }); 
 
       $('#map').on( "click", function( event ) {
-        console.log( "pageX: " + event.pageX + ", pageY: " + event.pageY );
+        $('#log').text( "pageX: " + event.pageX + ", pageY: " + event.pageY );
+        $('#train1').animate({ 'top': (event.pageY-25)+'px','left': (event.pageX-25)+'px'})
       });
 
     }); //$(document).ready(function(){

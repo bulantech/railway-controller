@@ -162,8 +162,13 @@ def index():
     
 @app.route('/js/<path:path>')
 def send_js(path):
-	print("-----path ", path)
+	print("-----path js", path)
 	return send_from_directory('js', path)
+
+@app.route('/images/<path:path>')
+def send_images(path):
+  print("-----path images", path)
+  return send_from_directory('images', path)
 
 # socketio @sio.on คือรับค่ามาจากหน้าเว็บ        
 @sio.on('connect', namespace='/chat')
