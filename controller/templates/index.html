@@ -22,10 +22,14 @@
   </nav>
 
   <div class="container-fluid">
-
+    <!-- สำหรับแสดงค่า xy ตอนตั้งค่า -->
     <span id="log" style="position: absolute; z-index: 1; "></span>
+
     <span id="train1" style="position: absolute; z-index: 1; ">
       <img src="images/1.png" alt="Card image cap" style="height: 50px; width: 50px;">
+    </span>
+    <span id="train2" style="position: absolute; z-index: 1; ">
+      <img src="images/2.png" alt="Card image cap" style="height: 50px; width: 50px;">
     </span>
 
     <!-- map -->
@@ -175,8 +179,7 @@
     var timeoutStartTrain2 = 20 //start train 2 after, second
     var timeoutStartAfterStop = 10 //start train 2 after, second
     
-    var lowCount = 0.05 // ค่าสูงสุดของเหล็กแคบ
-    var highCount = 0.50 // ค่าต่ำสุดของเหล็กกว้าง
+    var midCount = 0.15 // ค่าระหว่างเหล็กแคบ และเหล็กกว้าง
     
     var station = [1, 5, 8, 11]  //station sensor     
     var sensorXY = [ // xy point on image
@@ -218,19 +221,21 @@
       });
       
       socket.on('sensor', function(msg) {
-        console.log('sensorXY =>',sensorXY[msg.channel])
+        // console.log('sensorXY =>',sensorXY[msg.channel])
         let train = 0
         if(msg.event == 'sensorOff') {          
-          if(msg.count < highCount) {
+          if(msg.count < midCount) {
             train = 1
-            console.log('train1', msg.channel) //or train 2
+            $('#train1').animate({ 'top': (sensorXY[msg.channel][1]-25)+'px','left': (sensorXY[msg.channel][0]-25)+'px'})
+            console.log('train1', msg.channel, msg.count) //or train 2
 
-          } else if(msg.count > lowCount) {
+          } else {
             train = 2
-            console.log('train2', msg.channel) //or train 1
+            $('#train2').animate({ 'top': (sensorXY[msg.channel][1]-25)+'px','left': (sensorXY[msg.channel][0]-25)+'px'})
+            console.log('train2', msg.channel, msg.count) //or train 1
           }
-          $('#train1').animate({ 'top': (sensorXY[msg.channel][1]-25)+'px','left': (sensorXY[msg.channel][0]-25)+'px'})
-
+                    
+          // จอมเมื่อถึง sensor สถานี
           // if(station.indexOf(msg.channel) >= 0) {
           //   $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'stop"]').click()
           //   setTimeout(() => {
@@ -305,7 +310,8 @@
           console.log( data );
         });
       }); 
-
+      
+      // สำหรับหาค่า xy
       $('#map').on( "click", function( event ) {
         $('#log').text( "pageX: " + event.pageX + ", pageY: " + event.pageY );
         $('#train1').animate({ 'top': (event.pageY-25)+'px','left': (event.pageX-25)+'px'})

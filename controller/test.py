@@ -97,12 +97,13 @@ class ThreadingExample(object):
     while True:      
       start = time.time()
       sensorOn(self.x, 0.0)
-      time.sleep(0.1)
+      time.sleep(0.2)
       end = time.time()  
       elapsed = end - start
       sensorOff(self.x, elapsed)          
       # print(self.x, elapsed)
       time.sleep(2)
+
       self.x += 1
       if self.x > 15:
         self.x = 1
