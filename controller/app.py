@@ -28,8 +28,8 @@ sensor14 = Button(19, pull_up=True)
 sensor15 = Button(13, pull_up=True)
 	
 # input event on เมื่อสัญาณเข้าเป็น 0
-button.when_pressed = lambda : sensorOn(69) # for test
-button.when_released = lambda : sensorOff(69) # for test
+button.when_pressed = lambda : sensorOn(1) # for test
+button.when_released = lambda : sensorOff(1) # for test
 
 sensor1.when_pressed = lambda : sensorOn(1)
 sensor1.when_released = lambda : sensorOff(1)
@@ -65,21 +65,32 @@ sensor15.when_pressed = lambda : sensorOn(15)
 sensor15.when_released = lambda : sensorOff(15)
 
 # ตัวแปรเก็บค่าการเปลี่ยแปลงของ sensor
-dataChange = { "event": "none", "channel": 0}
-dataChangeBuf = { "event": "none", "channel": 0}
+dataChange = { "event": "none", "channel": 0, "count": 0.0}
+dataChangeBuf = { "event": "none", "channel": 0, "count": 0.0}
+timeCount=[]
+for i in range(15):
+	timeCount.append(0)
+
+import time
 
 # ฟังชั่งเมื่เซนต์เซอร์เปลี่นสถานะ
 def sensorOn(channel):
-	led.on()
-	print('sensorOn ' + str(channel))
+	# led.on()	
+	count = 0
 	dataChange["event"] = "sensorOn"
 	dataChange["channel"] = channel
+	dataChange["count"] = 0
+	timeCount[channel-1] = time.time()
+	print('sensorOn', str(channel), count)
 	
 def sensorOff(channel):
-	led.off()
-	print('sensorOff ' + str(channel))
+	# led.off()	
+	count = 0
+	count = time.time() - timeCount[channel-1]
 	dataChange["event"] = "sensorOff"
 	dataChange["channel"] = channel
+	dataChange["count"] = count
+	print('sensorOff', str(channel), count)
 
 # web server and socketio	
 import socketio
@@ -136,6 +147,11 @@ def send_js(path):
 	print("-----path ", path)
 	return send_from_directory('js', path)
 
+@app.route('/images/<path:path>')
+def send_images(path):
+  print("-----path images", path)
+  return send_from_directory('images', path)
+  
 # socketio @sio.on คือรับค่ามาจากหน้าเว็บ        
 @sio.on('connect', namespace='/chat')
 def connect(sid, environ):
