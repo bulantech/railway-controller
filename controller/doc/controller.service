@@ -1,0 +1,23 @@
+[Unit]
+Description=Controller auto start
+After=network.target
+
+[Service]
+Type=simple
+# Another Type option: forking
+User=ppe
+WorkingDirectory=/home/ppe/controller/
+ExecStart=/usr/bin/python app.py
+Restart=on-failure
+# Other Restart options: or always, on-abort, etc
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target
+
+# enter command to setup service
+# sudo cp controller.service /etc/systemd/system/
+# sudo systemctl daemon-reload
+# sudo systemctl start controller
+# sudo systemctl status controller
+# sudo systemctl enable controller

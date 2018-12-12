@@ -1,0 +1,23 @@
+[Unit]
+Description=Train auto start
+After=network.target
+
+[Service]
+Type=simple
+# Another Type option: forking
+User=ppe
+WorkingDirectory=/home/ppe/train/
+ExecStart=/usr/bin/python app.py
+Restart=on-failure
+# Other Restart options: or always, on-abort, etc
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target
+
+# enter command to setup service
+# sudo cp train.service /etc/systemd/system/
+# sudo systemctl daemon-reload
+# sudo systemctl start train
+# sudo systemctl status train
+# sudo systemctl enable train
