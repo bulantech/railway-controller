@@ -35,65 +35,55 @@ String homePage = " \
   <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>  \
 </head>  \
 <body>  \
-  <div class='jumbotron text-center'> \
-    <h2>Railroad Switch</h2>     \
-    <div class='row justify-content-center''> \
-      <div class='col-3'> \
-        <div class='form-check'> \
-          <input class='form-check-input' type='checkbox' value='' id='defaultCheck1'> \
-          <label class='form-check-label' for='defaultCheck1'> \
-            External IP: \
-          </label> \
-        </div> \
-        <input class='form-control' type='text' placeholder='Enter Railroad Switch ip' id='ip' disabled> \
-      </div> \
+  <nav class='navbar navbar-dark bg-primary' data-toggle='affix'> \
+    <div class='mx-auto d-sm-flex d-block flex-sm-nowrap'> \
+      <a class='navbar-brand' href='#'>Railroad Switch </a> \
     </div> \
-  </div> \
- \
+  </nav> \
   <div class='container'> \
-    <div class='card-deck'> \
+    <div class='card-deck mt-3'> \
       <div class='card text-center' name='1'> \
         <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
         <div class='card-body'> \
           <h5 class='card-title'>Turnout 1</h5> \
-          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
-          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+          <button type='button' class='btn btn-danger btn-sm mx-1' name='l'><h2><</h2></button> \
+          <button type='button' class='btn btn-primary btn-sm mx-1' name='r'><h2>></h2></button> \
         </div> \
       </div> \
       <div class='card text-center' name='2'> \
         <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
         <div class='card-body'> \
           <h5 class='card-title'>Turnout 2</h5> \
-          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
-          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+          <button type='button' class='btn btn-danger btn-sm mx-1' name='l'><h2><</h2></button> \
+          <button type='button' class='btn btn-primary btn-sm mx-1' name='r'><h2>></h2></button> \
         </div> \
       </div> \
       <div class='card text-center' name='3'> \
         <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
         <div class='card-body'> \
           <h5 class='card-title'>Turnout 3</h5> \
-          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
-          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+          <button type='button' class='btn btn-danger btn-sm mx-1' name='l'><h2><</h2></button> \
+          <button type='button' class='btn btn-primary btn-sm mx-1' name='r'><h2>></h2></button> \
         </div> \
       </div> \
       <div class='card text-center' name='4'> \
         <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'> \
         <div class='card-body'> \
           <h5 class='card-title'>Turnout 4</h5> \
-          <button type='button' class='btn btn-danger btn-lg' name='l'><h2><-</h2></button> \
-          <button type='button' class='btn btn-primary btn-lg' name='r'><h2>-></h2></button> \
+          <button type='button' class='btn btn-danger btn-sm mx-1' name='l'><h2><</h2></button> \
+          <button type='button' class='btn btn-primary btn-sm mx-1' name='r'><h2>></h2></button> \
         </div> \
       </div> \
     </div> \
   </div> \
   \
   <script>       \
-    $( document ).ready(function() {    \
+    $( document ).ready(function() {   \
       let ori = window.location.origin; \
       $.get( ori+'/status', function( data ) { \
         console.log( data ); \
       }); \
-\
+ \
       $('button').click(function(e) {   \
         let name = $(this).attr('name'); \
         let cardNumber = $(this).parent().parent().attr('name'); \
@@ -110,8 +100,8 @@ String homePage = " \
           return; \
         } \
  \
-        $(this).parent().find('button').removeClass().addClass('btn btn-primary btn-lg'); \
-        $(this).removeClass().addClass('btn btn-danger btn-lg'); \
+        $(this).parent().find('button').removeClass().addClass('btn btn-primary btn-sm mx-1'); \
+        $(this).removeClass().addClass('btn btn-danger btn-sm mx-1'); \
         $(this).parent().parent().find('img').attr('src','https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg'); \
         if(name=='r') { \
           $(this).parent().parent().find('img').attr('src','https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/r.jpg'); \
@@ -133,7 +123,7 @@ String homePage = " \
    });     \
   </script>      \
 </body>  \
-<html> \
+<html>  \
  ";
 
 void handleRoot() {
