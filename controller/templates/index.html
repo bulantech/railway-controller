@@ -51,7 +51,7 @@
       <div class="col-12">
         <div class="card text-center py-3 px-3">
           <div class='card-deck'>
-          <!-- <div class="col-4"> -->
+
             <div class="card text-center controll" name="1">
               <div class="card-header">
                 Train 1
@@ -61,8 +61,7 @@
                 <button class="btn btn-danger btn-lg train" type="button" name="train1stop">STOP</button>
               </div>
             </div>
-          <!-- </div>
-          <div class="col-4"> -->
+ 
             <div class="card text-center controll" name="12">
                 <div class="card-header">
                   Both
@@ -71,8 +70,7 @@
                 <button class="btn btn-danger btn-lg train" type="button">STOP</button>
               </div>
             </div>
-          <!-- </div>
-          <div class="col-4"> -->
+  
             <div class="card text-center controll" name="2">
               <div class="card-header">
                 Train 2
@@ -85,48 +83,6 @@
           </div>      
         </div>
       </div>      
-    </div>
-
-    <!-- turnout -->
-    <div class="row mt-3 py-2">
-      <div class="col-12">
-        <div class="card text-center py-3 px-3">
-          <div class='card-deck'>
-            <div class='card text-center' name='1'>
-              <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'>
-              <div class='card-body'>
-                <h5 class='card-title'>Turnout 1</h5>
-                <button type='button' class='btn btn-danger btn-lg rl' name='l'><h2><-</h2></button>
-                <button type='button' class='btn btn-primary btn-lg rl' name='r'><h2>-></h2></button>
-              </div>
-            </div>
-            <div class='card text-center' name='2'>
-              <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'>
-              <div class='card-body'>
-                <h5 class='card-title'>Turnout 2</h5>
-                <button type='button' class='btn btn-danger btn-lg rl' name='l'><h2><-</h2></button>
-                <button type='button' class='btn btn-primary btn-lg rl' name='r'><h2>-></h2></button>
-              </div>
-            </div>
-            <div class='card text-center' name='3'>
-              <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'>
-              <div class='card-body'>
-                <h5 class='card-title'>Turnout 3</h5>
-                <button type='button' class='btn btn-danger btn-lg rl' name='l'><h2><-</h2></button>
-                <button type='button' class='btn btn-primary btn-lg rl' name='r'><h2>-></h2></button>
-              </div>
-            </div>
-            <div class='card text-center' name='4'>
-              <img class='card-img-top' src='https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg' alt='Card image cap'>
-              <div class='card-body'>
-                <h5 class='card-title'>Turnout 4</h5>
-                <button type='button' class='btn btn-danger btn-lg rl' name='l'><h2><-</h2></button>
-                <button type='button' class='btn btn-primary btn-lg rl' name='r'><h2>-></h2></button>
-              </div>
-            </div>
-          </div>
-        </div> 
-      </div>   
     </div>
 
   </div> 
@@ -148,22 +104,12 @@
               <label >Train1 IP</label>
               <input type="text" class="form-control" id="train1Ip" value="192.168.1.10">
             </div>
-            <!-- <div class="form-group">
-              <label >Train1 sensor count</label>
-              <input type="text" class="form-control" >
-            </div> -->
+  
             <div class="form-group">
               <label >Train2 IP</label>
               <input type="text" class="form-control" id="train2Ip" value="192.168.1.11">
             </div>
-            <!-- <div class="form-group">
-              <label >Train2 sensor count</label>
-              <input type="text" class="form-control" >
-            </div> -->
-            <div class="form-group">
-              <label >Turnout IP</label>
-              <input type="text" class="form-control" id="turnoutIp" value="192.168.1.12">
-            </div>
+
           </form>
         </div>
         <div class="modal-footer">
@@ -178,10 +124,11 @@
     
     var timeoutStartTrain2 = 20 //start train 2 after, second
     var timeoutStartAfterStop = 10 //start train 2 after, second
-    
+    var firstStart = 1
     var midCount = 0.15 // ค่าระหว่างเหล็กแคบ และเหล็กกว้าง
     
-    var station = [1, 5, 8, 11]  //station sensor     
+    var station = [1, 5, 8, 11]  //station sensor 
+    var stationStop = [2, 3]  //station stop      
     var sensorXY = [ // xy point on image
       [0, 0], // not use
 
@@ -191,13 +138,13 @@
       [718, 442],
       [571, 327],
 
-      [770, 334], // sensor 1 position
+      [770, 334], // sensor 5 position
       [757, 226],
       [956, 329],
       [718, 442],
       [571, 327],
 
-      [770, 334], // sensor 1 position
+      [770, 334], // sensor 11 position
       [757, 226],
       [956, 329],
       [718, 442],
@@ -236,12 +183,18 @@
           }
                     
           // จอมเมื่อถึง sensor สถานี
-          // if(station.indexOf(msg.channel) >= 0) {
-          //   $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'stop"]').click()
-          //   setTimeout(() => {
-          //     $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'start"]').click()
-          //   }, timeoutStartAfterStop*1000)
-          // }
+          if(station.indexOf(msg.channel) >= 0) {
+            $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'stop"]').click()
+            setTimeout(() => {
+              $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'start"]').click()
+            }, timeoutStartAfterStop*1000)
+          }
+
+          // จอมเมื่อถึง sensor สถานีจอด
+          if(stationStop.indexOf(msg.channel) >= 0) {
+            $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'stop"]').click()
+          }
+
         }
       });
       
@@ -265,9 +218,12 @@
             console.log( data );
           });
           if(name.toLowerCase() == 'start') {
-            setTimeout(() => {
-              $('button[name="train2start"]').click()
-            }, timeoutStartTrain2*1000)
+            if(firstStart) { //start คันที่สองเพียงครั้งแรก
+              firstStart = 0
+              setTimeout(() => {
+                $('button[name="train2start"]').click()
+              }, timeoutStartTrain2*1000)
+            }
           }
         } else if(cardNumber=='2') {
           console.log(name, cardNumber, url2)
@@ -283,32 +239,6 @@
             console.log( data );
           });
         }  
-      }); 
-
-      // Turnout 
-      $('.rl').click(function(e) {  
-        let name = $(this).attr('name');
-        let cardNumber = $(this).parent().parent().attr('name');
-        let ip = $('#turnoutIp').val();
-        let url = 'http://'+ip+'/'+cardNumber+'/'+name;
-        let origin = window.location.origin;
-
-        if(ip == '') { 
-          alert('Enter Railroad Switch ip');
-          return;
-        }
-
-        $(this).parent().find('button').removeClass().addClass('btn btn-primary btn-lg');
-        $(this).removeClass().addClass('btn btn-danger btn-lg');
-        $(this).parent().parent().find('img').attr('src','https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/l.jpg');
-        if(name=='r') {
-          $(this).parent().parent().find('img').attr('src','https://raw.githubusercontent.com/bulantech/railway-controller/master/turnout/doc/r.jpg');
-        }
-        
-        console.log(name, cardNumber, ip, url, origin)   ;     
-        $.get( url, function( data ) {
-          console.log( data );
-        });
       }); 
       
       // สำหรับหาค่า xy
