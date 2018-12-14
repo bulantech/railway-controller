@@ -193,6 +193,7 @@
           // จอมเมื่อถึง sensor สถานีจอด
           if(stationStop.indexOf(msg.channel) >= 0) {
             $('.card.controll[name="'+ train +'"]').find('button[name="train' +train+ 'stop"]').click()
+            firstStart = 1
           }
 
         }
