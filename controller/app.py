@@ -133,6 +133,7 @@ def background_thread():
 			sio.emit('sensor', dataChange, namespace='/chat')
 			dataChangeBuf["event"] = dataChange["event"]
 			dataChangeBuf["channel"] = dataChange["channel"]	
+			dataChangeBuf["count"] = dataChange["count"]
                  
 # route
 @app.route('/')
